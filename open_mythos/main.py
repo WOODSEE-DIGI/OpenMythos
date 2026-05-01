@@ -1077,7 +1077,8 @@ class OpenMythos(nn.Module):
             )
             logits = logits[:, -1, :] / temperature
             if top_k > 0:
-                v, _ = logits.topk(top_k)
+                k = min(top_k, logits.size(-1))
+                v, _ = logits.topk(k)
                 logits[logits < v[:, -1:]] = float("-inf")
             probs = F.softmax(logits, dim=-1)
             next_tok = torch.multinomial(probs, num_samples=1)
